@@ -1,6 +1,7 @@
 import {useDispatch, useSelector} from "react-redux";
 import {useState} from "react";
 import {postAdded} from "./postSlice.js";
+import {nanoid} from "@reduxjs/toolkit";
 
 const AddPostForm = () => {
     const dispatch = useDispatch()
@@ -18,7 +19,10 @@ const AddPostForm = () => {
             console.log(title)
             console.log(content)
             dispatch(
-                postAdded({title, content})
+                postAdded({
+                    id:nanoid(),
+                    title,
+                    content})
             )
             setTitle('')
             setContent('')
