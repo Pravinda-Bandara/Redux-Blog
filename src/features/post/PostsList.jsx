@@ -1,5 +1,4 @@
 import {useSelector} from "react-redux";
-import {isTSIntersectionType} from "eslint-plugin-react/lib/util/ast.js";
 import {selectAllPosts} from "./postSlice.js";
 
 export function PostsList() {
