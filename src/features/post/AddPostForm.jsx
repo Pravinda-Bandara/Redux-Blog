@@ -19,11 +19,8 @@ const AddPostForm = () => {
             console.log(title)
             console.log(content)
             dispatch(
-                postAdded({
-                    id:nanoid(),
-                    title,
-                    content})
-            )
+                postAdded( title,content)
+            );
             setTitle('')
             setContent('')
         }
