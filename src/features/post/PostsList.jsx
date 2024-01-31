@@ -21,18 +21,13 @@ export function PostsList() {
         content = <p>"Loading..."</p>;
     } else if (postStatus === 'succeeded') {
         const orderedPosts = posts.slice().sort((a, b) => b.date.localeCompare(a.date));
-        content = orderedPosts.map(post => (
-            <div key={post.id}>
-                <PostsExcerpt post={post} />
-                <p>Post ID: {post.id}</p>
-            </div>
-        ));
+        content = orderedPosts.map(post => <PostsExcerpt post={post} />);
     } else if (postStatus === 'failed') {
         content = <p>{error}</p>;
     }
 
     return (
-        <section>
+        <section className="post-list">
             <h2>Posts</h2>
             {content}
         </section>

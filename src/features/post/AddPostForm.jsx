@@ -50,8 +50,8 @@ function AddPostForm() {
     };
 
     return (
-        <section>
-            <h2>Add a New Post</h2>
+        <section className="add-post-form">
+            <h2 className="main-title">Add a New Post</h2>
             <form>
                 <label htmlFor="postTitle">Post Title:</label>
                 <input
@@ -73,7 +73,12 @@ function AddPostForm() {
                     value={content}
                     onChange={onContentChanged}
                 />
-                <button type="button" onClick={onSavePostClicked} disabled={!canSave}>
+                <button
+                    type="button"
+                    onClick={onSavePostClicked}
+                    disabled={!canSave}
+                    className={canSave ? 'enabled' : 'disabled'}
+                >
                     Save Post
                 </button>
             </form>
