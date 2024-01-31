@@ -1,43 +1,53 @@
 import {useDispatch, useSelector} from "react-redux";
-import {useState} from "react";
-import {postAdded} from "./postSlice.js";
+import {useEffect, useState} from "react";
 import {selectAllUsers} from "../users/userSlice.js";
+import {addNewPost} from "./postSlice.js";
 
+function AddPostForm() {
+    const dispatch = useDispatch();
 
-const AddPostForm = () => {
-    const dispatch = useDispatch()
+    const [title, setTitle] = useState('');
+    const [content, setContent] = useState('');
+    const [userId, setUserId] = useState('');
+    const [addRequestStatus, setAddRequestStatus] = useState('idle');
+    const users = useSelector(selectAllUsers);
 
-    const [title, setTitle] = useState('')
-    const [content, setContent] = useState('')
-    const [userId, setUserId] = useState('')
-    const users=useSelector(selectAllUsers)
+    const onTitleChanged = (e) => setTitle(e.target.value);
+    const onContentChanged = (e) => setContent(e.target.value);
+    const onAuthorChanged = (e) => setUserId(e.target.value);
 
-    const onTitleChanged = e => setTitle(e.target.value)
-    const onContentChanged = e => setContent(e.target.value)
-    const onAuthorChanged= e => setUserId(e.target.value)
+    const canSave = [title, content, userId].every(Boolean) && addRequestStatus === 'idle';
 
+    useEffect(() => {
+        if (addRequestStatus === 'pending') {
+            const savePost = async () => {
+                try {
+                    await dispatch(addNewPost({ title, body: content, userId })).unwrap();
+                    setTitle('');
+                    setContent('');
+                    setUserId('');
+                } catch (err) {
+                    console.error('Failed to save the post', err);
+                } finally {
+                    setAddRequestStatus('idle');
+                }
+            };
 
-
-    const onSavePostClicked = () => {
-        if (title && content) {
-            console.log(title)
-            console.log(content)
-            dispatch(
-                postAdded( title,content,userId)
-            );
-            setTitle('')
-            setContent('')
+            savePost();
         }
-    }
-    const canSave=Boolean(title)&&Boolean(content)&&Boolean(userId)
-    const userOptions=users.map(user=>(
-        <option
-            value={user.id}
-            key={user.id}>
+    }, [addRequestStatus, dispatch, title, content, userId]);
+
+    const usersOptions = users.map((user) => (
+        <option key={user.id} value={user.id}>
             {user.name}
         </option>
-    ))
+    ));
 
+    const onSavePostClicked = () => {
+        if (canSave) {
+            setAddRequestStatus('pending');
+        }
+    };
 
     return (
         <section>
@@ -51,10 +61,10 @@ const AddPostForm = () => {
                     value={title}
                     onChange={onTitleChanged}
                 />
-                <label htmlFor="postAuthor">Author</label>
-                <select  id="postAuther" value={userId} onChange={onAuthorChanged}>
+                <label htmlFor="postAuthor">Author:</label>
+                <select id="postAuthor" value={userId} onChange={onAuthorChanged}>
                     <option value=""></option>
-                    {userOptions}
+                    {usersOptions}
                 </select>
                 <label htmlFor="postContent">Content:</label>
                 <textarea
@@ -63,13 +73,12 @@ const AddPostForm = () => {
                     value={content}
                     onChange={onContentChanged}
                 />
-                <button
-                    type="button"
-                    onClick={onSavePostClicked}
-                    disabled={!canSave}
-                >Save Post</button>
+                <button type="button" onClick={onSavePostClicked} disabled={!canSave}>
+                    Save Post
+                </button>
             </form>
         </section>
-    )
+    );
 }
-export default AddPostForm
+
+export default AddPostForm;
